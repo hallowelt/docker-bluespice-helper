@@ -5,4 +5,4 @@ RUN apk add bash \
 	mongodb-tools \
 	mysql-client \
 	docker-cli
-COPY --chmod=755 ./app/bin/prepare-bluespice /app/bin/prepare-bluespice
+COPY ./root-fs/app /app
