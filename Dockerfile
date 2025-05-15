@@ -4,5 +4,6 @@ ENV PATH="/app/bin:${PATH}"
 RUN apk add bash \
 	mongodb-tools \
 	mysql-client \
-	docker-cli
+	docker-cli \
+	vim
 COPY ./root-fs/app /app
