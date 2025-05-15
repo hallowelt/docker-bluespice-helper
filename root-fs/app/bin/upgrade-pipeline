@@ -1,7 +1,10 @@
 #!/bin/bash
-export LOGFILE=/data/wiki/bluespice/logs/infrastructure_upgrade_5.log
+export LOGFILE=/data/wiki/bluespice/logs/backend_upgrade_5.log
 if [[ -f ${LOGFILE} ]] && [[ $(stat -c%s ${LOGFILE}) > 0 ]]; then
     exit 1
+
+else
+    touch ${LOGFILE}
+    /app/bin/upgrade5x/upgrade-mongo-db
+    /app/bin/upgrade5x/upgrade-databases
 fi
-touch ${LOGFILE}
-/app/bin/upgrade5x/upgrade-mongo-db

@@ -17,5 +17,5 @@ CREATE TABLE /*_*/oathauth_devices (
   PRIMARY KEY(oad_id)
 ) /*$wgDBTableOptions*/;
 
-ALTER TABLE openid_connect DROP COLUMN oidc_id;
-ALTER TABLE openid_connect ADD PRIMARY KEY (oidc_user);
+ALTER TABLE IF EXISTS openid_connect DROP COLUMN oidc_id;
+ALTER TABLE IF EXISTS openid_connect ADD PRIMARY KEY (oidc_user);
