@@ -1,6 +1,6 @@
 #!/bin/bash
 export LOGFILE=/data/wiki/bluespice/logs/infrastructure_upgrade_5.log
-if [[ -f ${LOGFILE} ] && [ $(stat -c%s ${LOGFILE}) > 0 ]]
+if [[ -f ${LOGFILE} ]] && [[ $(stat -c%s ${LOGFILE}) > 0 ]]; then
     exit 1
 fi
 touch ${LOGFILE}

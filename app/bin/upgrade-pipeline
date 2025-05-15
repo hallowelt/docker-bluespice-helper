@@ -1,7 +1,0 @@
-#!/bin/bash
-export LOGFILE=/data/wiki/bluespice/logs/infrastructure_upgrade_5.log
-if [[ -f ${LOGFILE} ] && [ $(stat -c%s ${LOGFILE}) > 0 ]]
-    exit 1
-fi
-touch ${LOGFILE}
-bash ./upgrade5x/upgrade-mongo-db
