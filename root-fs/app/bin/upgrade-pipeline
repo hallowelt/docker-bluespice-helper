@@ -4,7 +4,21 @@ if [[ -f ${LOGFILE} ]] && [[ $(stat -c%s ${LOGFILE}) > 0 ]]; then
     exit 1
 
 else
+    echo "running backend-upgrade"
     touch ${LOGFILE}
-    /app/bin/upgrade5x/upgrade-mongo-db
+    echo "fix Databases"
     /app/bin/upgrade5x/upgrade-databases
+     echo "Databases fixed"
+    echo "Wait for Mongo"
+    echo "30"
+    sleep 10
+    echo "20"
+    sleep 10
+    echo "10"
+    echo "upgrade Mongo"
+    /app/bin/upgrade5x/upgrade-mongo-db
+    echo "MongoDB upgraded and Collabpads Database restored"
+    echo "see DATADIR/wiki/bluespice/logs/backend_upgrade_5.log for more Information"
+    echo "delete the file for rerun"
+
 fi

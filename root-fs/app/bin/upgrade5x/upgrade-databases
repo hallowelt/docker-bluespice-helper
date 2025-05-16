@@ -15,6 +15,6 @@ readarray -t aDB <<< "$DATABASES"
 
 # run sql-command
 for sDB in "${aDB[@]}"; do
-    TIMESTAMP=`date +_%Y-%m-%d_%H-%M-%S`
+    TIMESTAMP=`date +%Y-%m-%d_%H-%M-%S`
     mysql_connect ${sDB} < /app/bin/upgrade5x/upgrade_db.sql && echo $TIMESTAMP "5.1 DB upgrade on Database ${sDB}" >> ${LOGFILE}
 done

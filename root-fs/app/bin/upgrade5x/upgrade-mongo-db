@@ -13,12 +13,14 @@ function check_collabpads {
 
 output=$(docker ps -a -f name=${Mongo_new} | grep ${Mongo_new} 2> /dev/null)
 status=$(echo ${output}| awk '{print $7}')
+
 if [[ $status != "Up" ]]; then #is Mongo 8 not running then run 
     docker run -d -v ${DATADIR}/database-collabpads:/data/db --name ${Mongo_old} ${Mongo_old_image}
     sleep 5
     if [[ $(check_collabpads) > 0 ]]; then  #does DB exist then dump
-        echo "dump MongoDB"
         docker exec ${Mongo_old} mongodump --db ${Mongo_DB} --gzip --archive > ${Upgrade_Directory}/collabpads_dump.gz
+        TIMESTAMP=`date +%Y-%m-%d_%H-%M-%S`
+        echo $TIMESTAMP "Get Collabpads-Dump" >> ${LOGFILE}
     fi
     docker stop ${Mongo_old} 
     docker rm ${Mongo_old} 
@@ -26,7 +28,9 @@ fi
 
 if [[ $status != "Up" ]] ; then #if MONGO8 breaking 
     docker stop ${Mongo_new}
-    mv /data/database-collabpads/ /data/database-collabpads.bak
+    cd /data
+    tar czf ${Upgrade_Directory}/mongo_backup.tar.gz database-collabpads
+    rm -fr database-collabpads
     mkdir -p /data/database-collabpads
     docker restart ${Mongo_new}
     docker restart ${Collabpads}
