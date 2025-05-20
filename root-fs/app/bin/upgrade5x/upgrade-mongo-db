@@ -1,8 +1,8 @@
 #!/bin/bash
 Upgrade_Directory=/data/upgrade_backup
 mkdir -p ${Upgrade_Directory}
-Mongo_new=bluespice-collabpads-database-1
-Collabpads=bluespice-collabpads-1
+Mongo_new=bluespice-collabpads-database
+Collabpads=bluespice-collabpads
 Mongo_old_image=mongo:5.0-focal
 Mongo_old=bluespice-mongodumper
 Mongo_DB=collabpads
