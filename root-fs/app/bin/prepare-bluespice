@@ -8,6 +8,10 @@
 	if [[ "${EDITION}" == "pro" || "${EDITION}" == "farm" ]]; then
 		mkdir -p /data/database-collabpads
 	fi
+		
+	if [[ "${EDITION}" == "farm" ]]; then
+		mkdir -p /data/wiki/bluespice/{farm-instances,farm-archive}
+	fi
 echo "Changing User-Permission on persistent Data-Directories"
 
 chown -R 911:911 /data/database

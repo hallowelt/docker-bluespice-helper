@@ -4,8 +4,10 @@ if [[ -f ${LOGFILE} ]] && [[ $(stat -c%s ${LOGFILE}) > 0 ]]; then
     exit 1
 
 else
-    echo "running backend-upgrade"
     touch ${LOGFILE}
+    echo "move instances-Folders if needed"
+    /app/bin/upgrade5x/upgrade-filesystem
+    echo "running backend-upgrade"
     echo "fix Databases"
     /app/bin/upgrade5x/upgrade-databases
      echo "Databases fixed"
