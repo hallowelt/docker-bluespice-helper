@@ -6,6 +6,9 @@ MYSQL_PASS=${DB_PASS}
 function mysql_connect() {
     mysql -h ${MYSQL_SERVER} -u bluespice -p${MYSQL_PASS} $*
 }
+function mysql_dump() {
+    mysql -h ${MYSQL_SERVER} -u bluespice -p${MYSQL_PASS} $*
+}
 
 #LIST DATABASES
 DATABASES=$(mysql_connect < /app/bin/upgrade5x/list.sql | awk -F " " '{if (NR!=1) print $1}' | grep -v information_schema)
@@ -16,5 +19,6 @@ readarray -t aDB <<< "$DATABASES"
 # run sql-command
 for sDB in "${aDB[@]}"; do
     TIMESTAMP=`date +%Y-%m-%d_%H-%M-%S`
-    mysql_connect ${sDB} < /app/bin/upgrade5x/upgrade_db.sql && echo $TIMESTAMP "5.1 DB upgrade on Database ${sDB}" >> ${LOGFILE}
+    mysql_dump ${sDB} > $Upgrade_Directory/${sDB}_${TIMESTAMP}.sql 
+    mysql_connect ${sDB} < /app/bin/upgrade5x/upgrade_db.sql && echo $TIMESTAMP "5.1 DB upgrade on Database ${sDB}" | tee -a ${LOGFILE}
 done

@@ -1,5 +1,4 @@
 #!/bin/bash
-Upgrade_Directory=/data/upgrade_backup
 
 cd /data/wiki/bluespice
 	
@@ -7,10 +6,11 @@ cd /data/wiki/bluespice
 		echo "Moving _sf_instances" | tee -a ${LOGFILE}
 		mv _sf_instances/* farm-instances
 		echo "Moving _sf_archive" | tee -a ${LOGFILE}
+		touch _sf_archive/empty.txt
 		mv _sf_archive/* farm-archiv
-		mkdir -p $Upgrade_Directory
+		mkdir -p ${Upgrade_Directory}
 		echo "archive empty directories" | tee -a ${LOGFILE}
-		tar czf $Upgrade_Directory/_sf_backup.tar.gz _sf_instances _sf_archive
+		tar czf ${Upgrade_Directory}/_sf_backup.tar.gz _sf_instances _sf_archive
 		rm -fr _sf_instances
 		rm -fr _sf_archive
 	fi

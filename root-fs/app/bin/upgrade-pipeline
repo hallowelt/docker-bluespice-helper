@@ -1,5 +1,6 @@
 #!/bin/bash
 export LOGFILE=/data/wiki/bluespice/logs/backend_upgrade_5.log
+export Upgrade_Directory=/data/upgrade_backup
 if [[ -f ${LOGFILE} ]] && [[ $(stat -c%s ${LOGFILE}) > 0 ]]; then
     exit 1
 

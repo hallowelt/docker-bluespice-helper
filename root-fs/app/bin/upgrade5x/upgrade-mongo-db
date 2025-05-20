@@ -1,6 +1,4 @@
 #!/bin/bash
-Upgrade_Directory=/data/upgrade_backup
-mkdir -p ${Upgrade_Directory}
 Mongo_new=bluespice-collabpads-database
 Collabpads=bluespice-collabpads
 Mongo_old_image=mongo:5.0-focal
@@ -34,7 +32,10 @@ if [[ $status != "Up" ]] ; then #if MONGO8 breaking
     mkdir -p /data/database-collabpads
     docker restart ${Mongo_new}
     docker restart ${Collabpads}
+else
+	echo "MongoDB is fine" | tee -a ${LOGFILE}
 fi
+
 if [[ $status == "Up" ]] ; then
     TIMESTAMP=`date +%Y-%m-%d_%H-%M-%S`
     echo $TIMESTAMP "Mongo Version is 8" >> ${LOGFILE}
