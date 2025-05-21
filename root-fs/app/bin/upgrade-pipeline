@@ -2,19 +2,18 @@
 export LOGFILE=/data/wiki/bluespice/logs/backend_upgrade_5.log
 export VERSIONFILE=/data/wiki/bluespice/logs/BASEVERSION
 export Upgrade_Directory=/data/upgrade_backup
-while getopts ":h" option; do
+delete_logs() {
+	cat ${LOGFILE} >> ${LOGFILE}.bak
+	rm -fr ${LOGFILE}
+	rm -fr ${VERSIONFILE}
+}
+while getopts ":f" option; do
    case $option in
       f) # rerun upgrade
          delete_logs;;
    esac
 done
 
-delete_logs() {
-	cat ${LOGFILE} >> ${LOGFILE}.bak
-	rm -fr ${LOGFILE}
-	rm -fr ${VERSIONFILE}
-
-}
 
 if [[ -f ${LOGFILE} ]] && [[ $(stat -c%s ${LOGFILE}) > 0 ]]; then
     exit 0
