@@ -7,11 +7,11 @@ function mysql_connect() {
     mysql -h ${MYSQL_SERVER} -u bluespice -p${MYSQL_PASS} $*
 }
 function mysql_dump() {
-    mysql -h ${MYSQL_SERVER} -u bluespice -p${MYSQL_PASS} $*
+    mysqldump -h ${MYSQL_SERVER} -u bluespice -p${MYSQL_PASS} $*
 }
 
 #LIST DATABASES
-DATABASES=$(mysql_connect < /app/bin/upgrade5x/list.sql | awk -F " " '{if (NR!=1) print $1}' | grep -v information_schema)
+DATABASES=$(mysql_connect < /app/bin/upgrade5x/list.sql | awk -F " " '{if (NR!=1) print $1}' | grep -v information_schema | grep -v mysql | grep -v sys)
 
 # Create an array with the database names
 readarray -t aDB <<< "$DATABASES"

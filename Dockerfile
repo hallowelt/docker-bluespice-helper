@@ -5,5 +5,6 @@ RUN apk add bash \
 	mongodb-tools \
 	mysql-client \
 	docker-cli \
+	rsync \
 	vim
 COPY ./root-fs/app /app

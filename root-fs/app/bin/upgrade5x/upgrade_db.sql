@@ -1,4 +1,4 @@
-CREATE TABLE /*_*/oathauth_types (
+CREATE TABLE IF NOT EXISTS /*_*/oathauth_types (
   oat_id INT AUTO_INCREMENT NOT NULL,
   oat_name VARBINARY(255) NOT NULL,
   UNIQUE INDEX oat_name (oat_name),
@@ -6,7 +6,7 @@ CREATE TABLE /*_*/oathauth_types (
 ) /*$wgDBTableOptions*/;
 
 
-CREATE TABLE /*_*/oathauth_devices (
+CREATE TABLE IF NOT EXISTS /*_*/oathauth_devices (
   oad_id INT AUTO_INCREMENT NOT NULL,
   oad_user INT NOT NULL,
   oad_type INT NOT NULL,
