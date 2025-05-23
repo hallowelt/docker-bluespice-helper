@@ -11,7 +11,7 @@ function mysql_dump() {
 }
 
 #LIST DATABASES
-DATABASES=$(mysql_connect < /app/bin/upgrade5x/list.sql | awk -F " " '{if (NR!=1) print $1}' | grep -v information_schema | grep -v mysql | grep -v sys | grep -v performance_schema)
+DATABASES=$(mysql_connect <<< "SHOW DATABASES;" | awk -F " " '{if (NR!=1) print $1}' | grep -v information_schema | grep -v mysql | grep -v sys | grep -v performance_schema)
 
 # Create an array with the database names
 readarray -t aDB <<< "$DATABASES"
