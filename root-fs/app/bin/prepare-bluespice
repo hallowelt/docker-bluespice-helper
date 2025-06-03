@@ -10,7 +10,7 @@
 	fi
 		
 	if [[ "${EDITION}" == "farm" ]]; then
-		mkdir -p /data/wiki/bluespice/{farm-instances,farm-archive}
+		mkdir -p /data/wiki/bluespice/{farm-instances,farm-archives}
 	fi
 echo "Changing User-Permission on persistent Data-Directories"
 
