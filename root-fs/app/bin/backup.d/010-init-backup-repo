@@ -1,0 +1,16 @@
+#!/bin/bash
+if [[ ${1} != "--no-compress" ]] && [[ ! $(restic -r ${BLUESPICE_BACKUP_DIR} stats <<< ${BACKUP_PASS} > /dev/null 2>&1 )  ]]; then
+	echo "Your Backup Password is: " ${BACKUP_PASS} > /proc/1/fd/1 2>&1 
+	restic -r /data/backup/ init <<< ${BACKUP_PASS} > /proc/1/fd/1 2>&1 ;
+else
+	mkdir -p /data/backup
+fi
+	
+
+while getopts ":-no-compress" option; do
+   case $option in
+      -no-compress) # rerun upgrade
+         deacttivate_restic;;
+   esac
+done
+	
