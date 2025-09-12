@@ -8,10 +8,7 @@ function mysql_connect() {
     mysql -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} $*
 }
 function mysql_dump() {
-    mysqldump -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} --single-transaction \
-	    --ignore-table=$*.dpl_clview  \
-	    --ignore-table=$*.objectcache \
-		$*
+    mysqldump -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} --single-transaction $*
 }
 
 #LIST DATABASES
@@ -22,8 +19,12 @@ readarray -t aDB <<< "$DATABASES"
 
 # run sql-command
 for sDB in "${aDB[@]}"; do
+    IGNORE_TABLES=$(mysql_connect <<< "select group_concat(concat('--ignore-table=', TABLE_SCHEMA, '.', table_name) SEPARATOR ' ')  from information_schema.tables  where TABLE_SCHEMA = 'bluespice' and TABLE_NAME like '%cache%' or TABLE_NAME like '%dpl_clview%' or TABLE_NAME like '%smw_%';" | awk 'NR>1')
     if [[ -f ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${sDB}.sql ]]; then
     	rm -fr ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${sDB}.sql 
     fi
-    mysql_dump ${sDB} > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${sDB}.sql 
+    ##DUMP SCHEMA
+    mysql_dump --no-data ${sDB} > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${sDB}.sql 
+    ##DUMP DATA
+    mysql_dump --no-create-info ${IGNORE_TABLES} ${sDB} >> ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${sDB}.sql 
 done
