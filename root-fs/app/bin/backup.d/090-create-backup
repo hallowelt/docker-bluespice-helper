@@ -1,5 +1,5 @@
 #!/bin/bash
-if [[  $(restic -r /data/backup/ cat config) > /dev/null ]]; then
+if [[  $(restic -r /data/backup/ cat config <<< ${BACKUP_PASS} > /dev/null 2>&1 ) ]]; then
 	restic -r /data/backup/ backup /data/wiki/ --exclude-file=/app/bin/backup.d/conf/restic_excludes.txt <<< ${BACKUP_PASS} > /proc/1/fd/1 2>&1 ;
 else
 	TIMESTAMP=`date +%Y-%m-%d_%H-%M-%S`
