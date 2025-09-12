@@ -6,5 +6,7 @@ RUN apk add bash \
 	mysql-client \
 	docker-cli \
 	rsync \
+	restic \
+	supercronic \
 	vim
 COPY ./root-fs/app /app
