@@ -12,10 +12,6 @@ mkdir -p /data/database
 if [[ "${EDITION}" == "pro" || "${EDITION}" == "farm" ]]; then
   mkdir -p /data/database-collabpads
 fi
-    
-if [[ "${EDITION}" == "farm" ]]; then
-  mkdir -p /data/wiki/bluespice/{farm-instances,farm-archives}
-fi
 
 echo ""
 echo "#############################################"
@@ -34,20 +30,10 @@ directories=(
   /data/wiki/simplesamlphp/logs
 )
 
-if [ "${EDITION}" == "farm" ]; then
-  directories=(
-    /data/wiki/bluespice/cache
-    /data/wiki/bluespice/extensions/BlueSpiceFoundation/data
-    /data/wiki/bluespice/images
-    /data/wiki/bluespice/farm-instances
+if [[ "${EDITION}" == "farm" ]]; then
+  directories+=(
     /data/wiki/bluespice/farm-archive
-    /data/wiki/bluespice/logs/postupdate
-    /data/wiki/bluespice/logs/preupdate
-    /data/wiki/bluespice/logs
-    /data/wiki/simplesamlphp/cache
-    /data/wiki/simplesamlphp/certs
-    /data/wiki/simplesamlphp/data
-    /data/wiki/simplesamlphp/logs
+    /data/wiki/bluespice/farm-instances
   )
 fi
 
