@@ -16,7 +16,7 @@ echo "Changing User-Permission on persistent Data-Directories"
 
 chown -R 911:911 /data/database
 chown -R 1000:1000 /data/search
-chown -R 1002:1002 /data/wiki
+find /data/wiki ! -user 1002 -exec chown 1002:1002 /data/wiki
 
 if ls /data/database/logs/mariadb-bin.* 1>/dev/null 2>&1; then
   echo "Cleaning up MariaDB binlog files"
