@@ -35,3 +35,20 @@ force rerun
 To run the automated upgrade use `./bluespice-deploy up -d --profile=upgrade`
 
 Run `./bluespice-deploy up -d -profile=upgrade-force` to force rerun the update-scripts and update.php in Wiki
+
+## Testing
+
+Build the image with:
+
+```bash
+docker build --no-cache --pull -t bluespice/helper:latest .
+```
+
+Test the `prepare-bluespice` command with:
+```bash
+docker run --rm \
+	-v /tmp/helper$(date +%s):/data \
+	-e EDITION=farm \
+	-e WIKI_HOST=wiki.company.local \
+	bluespice/helper:latest prepare-bluespice
+```
