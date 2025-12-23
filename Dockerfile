@@ -1,5 +1,4 @@
-ARG BASE_IMAGE=alpine:3
-FROM $BASE_IMAGE
+FROM alpine:3
 ENV PATH="/app/bin:${PATH}"
 RUN apk add bash \
 	docker-cli \

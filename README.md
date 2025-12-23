@@ -1,10 +1,15 @@
-## Helper for Installation and upgrades
+<img alt="BlueSpice Logo" align="right" src="https://bluespice.com/wp-content/uploads/2022/09/bluespice_logo.png" />
+
+# `bluespice/helper` service for BlueSpice
+
+## Helper for installation and upgrades
 runs as prepare service to create Directory-Tree and set Correct permissions
 ` command : prepare bluespice `
+
 ## Runs as upgrade-helper
 
 ```
-tree /app/bin/upgrade5x                                                                                                
+tree /app/bin/upgrade5x
 upgrade5x
 ├── upgrade-databases (Prevents braking DB on upgrade)
 ├── upgrade_db.sql
