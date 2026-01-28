@@ -8,5 +8,6 @@ RUN apk add bash \
 	rsync \
 	restic \
 	supercronic \
-	vim
+	vim \
+	jq 
 COPY ./root-fs/app /app

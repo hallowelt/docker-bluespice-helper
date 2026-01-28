@@ -7,6 +7,25 @@ function check_collabpads {
 }
 
     if [[ $(check_collabpads) > 0 ]]; then  #does DB exist then dump
-        rm -fr ${BLUESPICE_BACKUP_DIRECTORY}/databases/collabpads_dump.gz
-        docker exec ${Mongo} mongodump --db ${Mongo_DB} --gzip --archive > ${BLUESPICE_BACKUP_DIRECTORY}/databases/collabpads_dump.gz
+        rm -fr ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/collabpads_EMPTY
+        rm -fr ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/collabpads_dump.gz
+        docker exec ${Mongo} mongodump \
+        --db ${Mongo_DB} --gzip \
+        --archive > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/collabpads_dump.gz
+        
+        if [[ ${EDITION} == "farm" ]]; then
+            mkdir -p ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/mongo-sessions
+            ##Export single Session for single Instances restore
+            while IFS= read -r line; do
+            SFI_PATH=$(echo "$line" | jq -r '.sfi_path')
+            docker exec ${Mongo}  mongoexport \
+            --pretty \
+            --db collabpads \
+            --collection sessions \
+            --query '{"${SFI_PATH}": "/w"}' \
+            --out ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/mongo-sessions/${SFI_PATH}_sessions_backup.json
+            done < <(jq -c '.[]' ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/instances.json)
+        fi
+    else
+        touch  ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/collabpads_EMPTY
     fi
