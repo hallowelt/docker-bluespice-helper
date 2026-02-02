@@ -11,11 +11,11 @@ function mysql_connect() {
 
 function mysql_table_list() {
 
-    mysql_connect -N -e "SELECT TABLE FROM information_schema.tables \
+    mysql -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} $* -N -e "SELECT table_name FROM information_schema.tables \
                         WHERE table_schema = '${MYSQL_DB}' \
                         AND table_name LIKE = '${1}%' \
-                        AND table_name != '%objectcache' \
-                        AND table_name != '%dpl_clview';"
+                        AND table_name not like '%objectcache' \
+                        AND table_name not like '%dpl_clview';"
 
 }
 
@@ -27,7 +27,7 @@ function mysql_dump() {
 if [ ${EDITION} === "farm" ]; then
     if [ ${WIKI_FARM_USE_SHARED_DB} ]; then
         ##LIST INSTANCES
-        mysql  -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} -N -e "SELECT CONCAT('{\"sfi_path\":\"', sfi_path, '\", \"sfi_db_prefix\":\"', sfi_db_prefix, '\"}') AS json FROM ${MYSQL_DB}.simple_farmer_instances;" > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/instances.json  
+        mysql  -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} -N -e "SELECT     JSON_ARRAYAGG( JSON_OBJECT( 'sfi_path', sfi_path, 'sfi_db_prefix', sfi_db_prefix )) AS json_array FROM ${MYSQL_DB}.simple_farmer_instances;" > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/instances.json
         ##DUMP MAIN
         mysql_dump ${MYSQL_DB} $(mysql_table_list) > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${MYSQL_DB}.sql
 
@@ -43,21 +43,21 @@ if [ ${EDITION} === "farm" ]; then
 
     else
         ##LIST INSTANCES
-        mysql  -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} -N -e "SELECT CONCAT('{\"sfi_path\":\"', sfi_path, '\", \"sfi_database\":\"', sfi_database, '\"}') AS json FROM ${MYSQL_DB}.simple_farmer_instances;" > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/instances.json
+        mysql  -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} -N -e "SELECT     JSON_ARRAYAGG( JSON_OBJECT( 'sfi_path', sfi_path, 'sfi_database', sfi_database )) AS json_array FROM ${MYSQL_DB}.simple_farmer_instances;" > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/instances.json
         ##DUMP MAIN
         mysql_dump ${MYSQL_DB} $(mysql_table_list) > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${MYSQL_DB}.sql
         
         ##DUMP INSTANCES
-         while IFS= read -r line; do
-            SFI_PATH=$(echo "$line" | jq -r '.sfi_path')
-            SFI_DB=$(echo "$line" | jq -r '.sfi_database')
+         jq -c '.[]' ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/instances.json | while read -r instance; do
+            SFI_PATH=$(echo "$instance" | jq -r '.sfi_path')
+            SFI_DB=$(echo "$instance" | jq -r '.sfi_database')
             mysql_dump ${SFI_DB} $(mysql_table_list) > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${SFI_PATH}.sql
 
-         done < <(jq -c '.[]' ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/instances.json)
+         done 
       fi       
 
 
 else
-    mysql_dump ${MYSQL_DB} $(mysql_table_list) > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${MYSQL_DB}.sql
+    mysql_dump ${MYSQL_DB} $(mysql_table_list) > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${MYSQL_DB}.mainDB.sql
 fi
 
