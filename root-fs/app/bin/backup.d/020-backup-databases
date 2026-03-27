@@ -13,9 +13,9 @@ function mysql_table_list() {
 
     mysql -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} $* -N -e "SELECT table_name FROM information_schema.tables \
                         WHERE table_schema = '${MYSQL_DB}' \
-                        AND table_name LIKE = '${1}%' \
-                        AND table_name not like '%objectcache' \
-                        AND table_name not like '%dpl_clview';"
+                        AND table_name LIKE '${1}%' \
+                        AND table_name NOT LIKE '%objectcache' \
+                        AND table_name NOT LIKE '%dpl_clview';"
 
 }
 
@@ -24,7 +24,7 @@ function mysql_dump() {
         $*
 	    
 }
-if [ ${EDITION} === "farm" ]; then
+if [ ${EDITION} == "farm" ]; then
     if [ ${WIKI_FARM_USE_SHARED_DB} ]; then
         ##LIST INSTANCES
         mysql  -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} -N -e "SELECT     JSON_ARRAYAGG( JSON_OBJECT( 'sfi_path', sfi_path, 'sfi_db_prefix', sfi_db_prefix )) AS json_array FROM ${MYSQL_DB}.simple_farmer_instances;" > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/instances.json
