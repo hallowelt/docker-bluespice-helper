@@ -4,8 +4,8 @@ export BLUESPICE_BACKUP_DIRECTORY=${BLUESPICE_BACKUP_DIRECTORY:-'/data/backup/re
 export BLUESPICE_TAR_BACKUP_DIRECTORY=${BLUESPICE_TAR_BACKUP_DIRECTORY:-'/data/backup/tar-backup'}
 for f in /app/bin/backup.d/*; do
 	if [ -f "$f" ]; then
-		echo ""  > /proc/1/fd/1
-		echo "🔧 Running $f" > /proc/1/fd/1
-		$f $* > /proc/1/fd/1
+		echo ""
+		echo "🔧 Running $f"
+		$f $*
 	fi
 done
