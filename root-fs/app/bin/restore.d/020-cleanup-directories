@@ -1,0 +1,44 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+echo "Preparing wiki directory for restore"
+
+# Always clean these directories (cacheable/regeneratable)
+dirs_to_clean=(
+	"/data/wiki/bluespice/images"
+	"/data/wiki/bluespice/cache"
+	"/data/wiki/bluespice/extensions/BlueSpiceFoundation/data"
+)
+
+for dir in "${dirs_to_clean[@]}"; do
+	if [[ -d "$dir" ]]; then
+		echo "Cleaning $dir"
+		rm -rf "$dir"
+	fi
+done
+
+# Clean pre- and post-init-settings.php
+for file in "/data/wiki/bluespice/pre-init-settings.php" "/data/wiki/bluespice/post-init-settings.php"; do
+	if [[ -f "$file" ]]; then
+		echo "Removing $file"
+		rm -f "$file"
+	fi
+done
+
+# For farm: clean only farm-instances that have a backup
+if [[ -d "/data/wiki/bluespice/farm-instances" ]]; then
+	for instance_backup in ${RESTORE_BACKUP_EXTRACT_DIR}/*; do
+		if [[ -d "$instance_backup" ]]; then
+			instance_name=$(basename "$instance_backup")
+			farm_instance_dir="/data/wiki/bluespice/farm-instances/$instance_name"
+			if [[ -d "$farm_instance_dir" ]]; then
+				echo "Cleaning farm instance: $instance_name"
+				rm -rf "$farm_instance_dir"
+			fi
+		fi
+	done
+fi
+
+echo "Directory cleaning completed"

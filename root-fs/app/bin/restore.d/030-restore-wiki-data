@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+echo "Restoring wiki data from backup"
+
+for archive in ${RESTORE_BACKUP_EXTRACT_DIR}/*.tar.gz; do
+	if [[ -f "$archive" ]]; then
+		dirname=$(basename "$archive" .tar.gz)
+		echo "Extracting $dirname..."
+		tar -xzf "$archive" -C /data/wiki/
+	fi
+done
+
+echo "Wiki data restored successfully"
