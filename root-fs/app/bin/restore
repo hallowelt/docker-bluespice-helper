@@ -1,0 +1,47 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+export BLUESPICE_TAR_BACKUP_DIRECTORY=${BLUESPICE_TAR_BACKUP_DIRECTORY:-'/data/backup/tar-backup'}
+export BLUESPICE_DATABASE_BACKUP_DIRECTORY=${BLUESPICE_DATABASE_BACKUP_DIRECTORY:-'/data/wiki/db_backup'}
+
+# Parse command line arguments
+RESTORE_MODE="full"
+RESTORE_FARM_INSTANCE=""
+
+for arg in "$@"; do
+	if [[ "$arg" == "full" ]]; then
+		RESTORE_MODE="full"
+	elif [[ "$arg" =~ ^sfr=(.+)$ ]]; then
+		RESTORE_MODE="instance"
+		RESTORE_FARM_INSTANCE="${BASH_REMATCH[1]}"
+	fi
+done
+
+# Find the most recent backup file
+BACKUP_FILE=$(ls -t "${BLUESPICE_TAR_BACKUP_DIRECTORY}"/*.tar.gz 2>/dev/null | head -1)
+
+if [[ -z "$BACKUP_FILE" ]]; then
+	echo "ERROR: No backup file found in ${BLUESPICE_TAR_BACKUP_DIRECTORY}"
+	exit 1
+fi
+
+echo ""
+echo "#############################################"
+echo "🔄 Starting restore process"
+echo "#############################################"
+echo "Backup file: $BACKUP_FILE"
+
+if [[ "$RESTORE_MODE" == "instance" ]]; then
+	echo "Mode: Single farm instance restore"
+	echo "Instance: $RESTORE_FARM_INSTANCE"
+	export RESTORE_FARM_INSTANCE="$RESTORE_FARM_INSTANCE"
+else
+	echo "Mode: Full restore"
+fi
+
+echo ""
+
+export RESTORE_BACKUP_FILE="$BACKUP_FILE"
+/app/bin/restore-pipeline
