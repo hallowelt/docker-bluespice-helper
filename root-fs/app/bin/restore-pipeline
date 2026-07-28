@@ -16,6 +16,22 @@ if [[ ! -f "${RESTORE_BACKUP_FILE}" ]]; then
 	exit 1
 fi
 
+# Setup logging
+RESTORE_TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+LOG_FILE="/data/wiki/bluespice/logs/backend_restore_${RESTORE_TIMESTAMP}.log"
+mkdir -p "$(dirname "$LOG_FILE")"
+
+# Create a wrapper function to add timestamps to all output
+log_with_timestamp() {
+	while IFS= read -r line; do
+		echo "[$(date '+%Y-%m-%d %H:%M:%S')] $line"
+	done
+}
+
+# All subsequent output goes to both stdout and logfile with timestamps
+exec 1> >(log_with_timestamp | tee "$LOG_FILE")
+exec 2>&1
+
 echo ""
 echo "#############################################"
 echo "🔄 Starting restore from ${RESTORE_BACKUP_FILE}"
