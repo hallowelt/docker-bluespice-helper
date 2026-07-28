@@ -1,7 +1,4 @@
 #!/bin/bash
-set -o errexit
-set -o nounset
-set -o pipefail
 
 MYSQL_SERVER=${DB_HOST:-'database'}
 MYSQL_USER=${DB_USER:-'bluespice'}

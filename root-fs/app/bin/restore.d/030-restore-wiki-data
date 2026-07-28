@@ -1,7 +1,4 @@
 #!/bin/bash
-set -o errexit
-set -o nounset
-set -o pipefail
 
 echo "Restoring wiki data from backup"
 

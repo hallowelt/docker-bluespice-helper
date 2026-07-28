@@ -1,7 +1,4 @@
 #!/bin/bash
-set -o errexit
-set -o nounset
-set -o pipefail
 
 TEMP_RESTORE_DIR=$(mktemp -d)
 trap "rm -rf $TEMP_RESTORE_DIR" EXIT
