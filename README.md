@@ -82,6 +82,43 @@ Runs as a scheduled backup service via `supercronic`.
 
 ---
 
+## Restore
+
+Restores TAR backups created by the backup service.
+
+**Command:** `restore-pipeline`
+
+**Required Environment Variable:**
+- `RESTORE_BACKUP_FILE` – Full path to the backup `.tar.gz` file to restore
+
+### Optional Environment Variables
+
+| Variable | Default | Description |
+|---|---|---|
+| `SAFE_RESTORE` | `false` | If set to `true`, skip all cleanup steps and only restore data |
+| `RESTORE_FARM_INSTANCE` | – | *(Farm only)* Restore only a specific farm instance (e.g., `instance1`). If not set, all instances are restored |
+
+### Logs
+
+All restore operations are logged to `/data/wiki/bluespice/logs/backend_restore_*.log` with timestamps.
+
+### Usage Examples
+
+**Full restore:**
+```bash
+RESTORE_BACKUP_FILE=/data/backup/tar-backup/wiki.example.com_2024-07-28_120000.tar.gz restore-pipeline
+```
+
+**Single farm instance restore (safe mode):**
+```bash
+RESTORE_BACKUP_FILE=/data/backup/tar-backup/wiki.example.com_2024-07-28_120000.tar.gz \
+  RESTORE_FARM_INSTANCE=instance1 \
+  SAFE_RESTORE=true \
+  restore-pipeline
+```
+
+---
+
 ## Testing
 
 Build the image with:

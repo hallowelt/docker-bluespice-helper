@@ -3,6 +3,12 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+# If SAFE_RESTORE is true, skip cleanup
+if [[ "${SAFE_RESTORE:-false}" == "true" ]]; then
+	echo "SAFE_RESTORE is enabled - skipping cleanup"
+	exit 0
+fi
+
 echo "Preparing wiki directory for restore"
 
 # Always clean these directories (cacheable/regeneratable)
@@ -29,16 +35,26 @@ done
 
 # For farm: clean only farm-instances that have a backup
 if [[ -d "/data/wiki/bluespice/farm-instances" ]]; then
-	for instance_backup in ${RESTORE_BACKUP_EXTRACT_DIR}/*; do
-		if [[ -d "$instance_backup" ]]; then
-			instance_name=$(basename "$instance_backup")
-			farm_instance_dir="/data/wiki/bluespice/farm-instances/$instance_name"
-			if [[ -d "$farm_instance_dir" ]]; then
-				echo "Cleaning farm instance: $instance_name"
-				rm -rf "$farm_instance_dir"
-			fi
+	if [[ -n "${RESTORE_FARM_INSTANCE:-}" ]]; then
+		# Single instance restore - only clean that one
+		farm_instance_dir="/data/wiki/bluespice/farm-instances/${RESTORE_FARM_INSTANCE}"
+		if [[ -d "$farm_instance_dir" ]]; then
+			echo "Cleaning farm instance: ${RESTORE_FARM_INSTANCE}"
+			rm -rf "$farm_instance_dir"
 		fi
-	done
+	else
+		# Full restore - clean all instances that have a backup
+		for instance_backup in ${RESTORE_BACKUP_EXTRACT_DIR}/*; do
+			if [[ -d "$instance_backup" ]]; then
+				instance_name=$(basename "$instance_backup")
+				farm_instance_dir="/data/wiki/bluespice/farm-instances/$instance_name"
+				if [[ -d "$farm_instance_dir" ]]; then
+					echo "Cleaning farm instance: $instance_name"
+					rm -rf "$farm_instance_dir"
+				fi
+			fi
+		done
+	fi
 fi
 
 echo "Directory cleaning completed"
