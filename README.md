@@ -95,8 +95,17 @@ Restores TAR backups created by the backup service.
 
 | Variable | Default | Description |
 |---|---|---|
-| `SAFE_RESTORE` | `false` | If set to `true`, skip all cleanup steps and only restore data |
-| `RESTORE_FARM_INSTANCE` | – | *(Farm only)* Restore only a specific farm instance (e.g., `instance1`). If not set, all instances are restored |
+| `RESTORE_FARM_INSTANCE` | – | *(Farm only)* Restore only a specific farm instance (e.g., `instance1`). If not set, all instances in the backup are restored |
+
+### Cleanup Behavior
+
+The restore process only deletes directories and files that **exist in the backup**:
+- Cleans cacheable directories: `images`, `cache`, `extensions/BlueSpiceFoundation/data`
+- Cleans init settings: `pre-init-settings.php`, `post-init-settings.php` 
+- For single instance restore: only cleans that specific farm instance
+- For full restore: only cleans farm instances that exist in the backup
+
+This ensures that if `FILE_BACKUP=false` (no files in backup), nothing gets deleted.
 
 ### Logs
 
@@ -104,16 +113,15 @@ All restore operations are logged to `/data/wiki/bluespice/logs/backend_restore_
 
 ### Usage Examples
 
-**Full restore:**
+**Full restore (all data from backup):**
 ```bash
 RESTORE_BACKUP_FILE=/data/backup/tar-backup/wiki.example.com_2024-07-28_120000.tar.gz restore-pipeline
 ```
 
-**Single farm instance restore (safe mode):**
+**Single farm instance restore (only that instance):**
 ```bash
 RESTORE_BACKUP_FILE=/data/backup/tar-backup/wiki.example.com_2024-07-28_120000.tar.gz \
   RESTORE_FARM_INSTANCE=instance1 \
-  SAFE_RESTORE=true \
   restore-pipeline
 ```
 
