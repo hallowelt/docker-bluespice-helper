@@ -5,13 +5,13 @@ MYSQL_USER=${DB_USER:-'bluespice'}
 MYSQL_PASS=${DB_PASS}
 MYSQL_PREFIX=${DB_PREFIX}
 
-function mysql_connect() {
-    mysql -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} $*
+function mariadb_connect() {
+    mariadb -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} $*
 }
 
-function mysql_table_list() {
+function mariadb_table_list() {
 
-    mysql -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} $* -N -e "SELECT table_name FROM information_schema.tables \
+    mariadb -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} $* -N -e "SELECT table_name FROM information_schema.tables \
                         WHERE table_schema = '${MYSQL_DB}' \
                         AND table_name LIKE '${1}%' \
                         AND table_name NOT LIKE '%objectcache' \
@@ -19,45 +19,45 @@ function mysql_table_list() {
 
 }
 
-function mysql_dump() {
-    mysqldump -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} --single-transaction \
+function mariadb_dump() {
+    mariadb-dump -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} --single-transaction \
         $*
 	    
 }
 if [ ${EDITION} == "farm" ]; then
     if [ ${WIKI_FARM_USE_SHARED_DB} ]; then
         ##LIST INSTANCES
-        mysql  -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} -N -e "SELECT     JSON_ARRAYAGG( JSON_OBJECT( 'sfi_path', sfi_path, 'sfi_db_prefix', sfi_db_prefix )) AS json_array FROM ${MYSQL_DB}.simple_farmer_instances;" > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/instances.json
+        mariadb  -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} -N -e "SELECT     JSON_ARRAYAGG( JSON_OBJECT( 'sfi_path', sfi_path, 'sfi_db_prefix', sfi_db_prefix )) AS json_array FROM ${MYSQL_DB}.simple_farmer_instances;" > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/instances.json
         ##DUMP MAIN
-        mysql_dump ${MYSQL_DB} $(mysql_table_list) > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${MYSQL_DB}.sql
+        mariadb_dump ${MYSQL_DB} $(mariadb_table_list) > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${MYSQL_DB}.sql
 
         ##DUMP INSTANCES
          while IFS= read -r line; do
 
             SFI_PATH=$(echo "$line" | jq -r '.sfi_path')
             SFI_DB_PREFIX=$(echo "$line" | jq -r '.sfi_db_prefix')
-            mysql_dump ${MYSQL_DB} $(mysql_table_list ${SFI_DB_PREFIX}) > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${SFI_PATH}.sql
+            mariadb_dump ${MYSQL_DB} $(mariadb_table_list ${SFI_DB_PREFIX}) > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${SFI_PATH}.sql
 
             done < <(jq -c '.[]' ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/instances.json)
             
 
     else
         ##LIST INSTANCES
-        mysql  -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} -N -e "SELECT     JSON_ARRAYAGG( JSON_OBJECT( 'sfi_path', sfi_path, 'sfi_database', sfi_database )) AS json_array FROM ${MYSQL_DB}.simple_farmer_instances;" > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/instances.json
+        mariadb  -h ${MYSQL_SERVER} -u ${MYSQL_USER} -p${MYSQL_PASS} -N -e "SELECT     JSON_ARRAYAGG( JSON_OBJECT( 'sfi_path', sfi_path, 'sfi_database', sfi_database )) AS json_array FROM ${MYSQL_DB}.simple_farmer_instances;" > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/instances.json
         ##DUMP MAIN
-        mysql_dump ${MYSQL_DB} $(mysql_table_list) > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${MYSQL_DB}.sql
+        mariadb_dump ${MYSQL_DB} $(mariadb_table_list) > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${MYSQL_DB}.sql
         
         ##DUMP INSTANCES
          jq -c '.[]' ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/instances.json | while read -r instance; do
             SFI_PATH=$(echo "$instance" | jq -r '.sfi_path')
             SFI_DB=$(echo "$instance" | jq -r '.sfi_database')
-            mysql_dump ${SFI_DB} $(mysql_table_list) > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${SFI_PATH}.sql
+            mariadb_dump ${SFI_DB} $(mariadb_table_list) > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${SFI_PATH}.sql
 
          done 
       fi       
 
 
 else
-    mysql_dump ${MYSQL_DB} $(mysql_table_list) > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${MYSQL_DB}.mainDB.sql
+    mariadb_dump ${MYSQL_DB} $(mariadb_table_list) > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${MYSQL_DB}.mainDB.sql
 fi
 
