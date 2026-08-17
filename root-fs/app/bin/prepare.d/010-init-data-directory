@@ -8,6 +8,8 @@ mkdir -p /data/search/data/nodes/0
 mkdir -p /data/wiki
 mkdir -p /data/proxy
 mkdir -p /data/database
+mkdir -p /data/database-statistics
+mkdir -p /data/statistics-dashboard/data
 
 if [[ "${EDITION}" == "pro" || "${EDITION}" == "farm" ]]; then
   mkdir -p /data/database-collabpads
@@ -60,7 +62,9 @@ echo "#############################################"
 echo "Changing user permission on persistent data directories"
 
 find /data/database ! -user 911 -exec chown 911:911 {} +
+find /data/database-statistics ! -user 911 -exec chown 911:911 {} +
 find /data/search ! -user 1000 -exec chown 1000:1000 {} +
+find /data/statistics-dashboard ! -user 472 -exec chown 472:0 {} +
 find /data/wiki ! -user 1002 -exec chown 1002:1002 {} +
 
 echo "Done"
