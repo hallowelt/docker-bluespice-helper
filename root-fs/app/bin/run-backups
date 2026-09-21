@@ -13,11 +13,11 @@ validate_cron() {
     return 0
 }
 
-if [[ -n "${BACKUP_TIME:-}" ]] && validate_cron "${BACKUP_TIME}"; then
-    EFFECTIVE_BACKUP_TIME="${BACKUP_TIME}"
+if [[ -n "${BLUESPICE_BACKUP_TIME:-}" ]] && validate_cron "${BLUESPICE_BACKUP_TIME}"; then
+    EFFECTIVE_BACKUP_TIME="${BLUESPICE_BACKUP_TIME}"
 else
-    if [[ -n "${BACKUP_TIME:-}" ]]; then
-        echo "WARNING: BACKUP_TIME '${BACKUP_TIME}' is not a valid cron expression, falling back to default '${DEFAULT_BACKUP_TIME}'"
+    if [[ -n "${BLUESPICE_BACKUP_TIME:-}" ]]; then
+        echo "WARNING: BLUESPICE_BACKUP_TIME '${BLUESPICE_BACKUP_TIME}' is not a valid cron expression, falling back to default '${DEFAULT_BACKUP_TIME}'"
     fi
     EFFECTIVE_BACKUP_TIME="${DEFAULT_BACKUP_TIME}"
 fi
