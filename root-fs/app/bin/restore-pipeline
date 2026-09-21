@@ -3,8 +3,8 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-export BLUESPICE_BACKUP_DIRECTORY=${BLUESPICE_BACKUP_DIRECTORY:-'/data/backup/restic'}
-export BLUESPICE_TAR_BACKUP_DIRECTORY=${BLUESPICE_TAR_BACKUP_DIRECTORY:-'/data/backup/tar-backup'}
+export BLUESPICE_BACKUP_DIRECTORY=${BLUESPICE_BACKUP_DIRECTORY:-'/backup/restic-backup'}
+export BLUESPICE_TAR_BACKUP_DIRECTORY=${BLUESPICE_TAR_BACKUP_DIRECTORY:-'/backup/tar-backup'}
 
 if [[ -z "${RESTORE_BACKUP_FILE:-}" ]]; then
 	echo "ERROR: RESTORE_BACKUP_FILE environment variable must be set"
