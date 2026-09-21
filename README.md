@@ -47,8 +47,8 @@ Runs as a scheduled backup service via `supercronic`.
 The `BACKUP_TYPE` variable controls which backup method is used:
 
 - **`dump-only`** - Only create database dumps (MariaDB + MongoDB), no TAR/Restic archive
-  - Lightweight, daily database snapshots
-  - Databases stored in `/data/wiki/db-dumps/` (overwrite daily)
+  - Lightweight, database snapshots on each backup run
+  - Databases stored in `/data/wiki/db-dumps/` (overwritten at each `BLUESPICE_BACKUP_TIME`)
   - Best for disk-constrained environments or when you don't need full file backups
 
 - **`tar-file`** (default) - Create TAR archives
