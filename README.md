@@ -42,12 +42,36 @@ Runs as a scheduled backup service via `supercronic`.
 
 **Command:** `run-backups`
 
+### Backup Types
+
+The `BACKUP_TYPE` variable controls which backup method is used:
+
+- **`dump-only`** - Only create database dumps (MariaDB + MongoDB), no TAR/Restic archive
+  - Lightweight, daily database snapshots
+  - Databases stored in `/data/wiki/db-dumps/` (overwrite daily)
+  - Best for disk-constrained environments or when you don't need full file backups
+
+- **`tar-file`** (default) - Create TAR archives
+  - Respects `FILE_BACKUP` variable:
+    - `true`: Archive all wiki files + database dumps
+    - `false`: Archive only database dumps
+  - Stored in `/backup/tar-backup/`
+  - Old backups retained based on `BLUESPICE_BACKUP_RETENTION`
+
+- **`restic-repo`** - Create Restic backups (deduplicating backup repository)
+  - Respects `FILE_BACKUP` variable:
+    - `true`: Backup all wiki files + database dumps
+    - `false`: Backup only database dumps
+  - Stored in `/backup/restic-backup/`
+  - Requires `BLUESPICE_BACKUP_PASS` for encryption
+
 ### Environment Variables
 
-#### Scheduling
+#### Scheduling & Backup Type
 | Variable | Default | Description |
 |---|---|---|
-| `BLUESPICE_BACKUP_TIME` | `0 2 * * *` | Cron expression for the backup schedule. Falls back to default if the value is not a valid cron string. |
+| `BLUESPICE_BACKUP_TIME` | `0 2 * * *` | Cron expression for the backup schedule. Falls back to default if invalid. |
+| `BACKUP_TYPE` | `tar-file` | Backup type: `dump-only` (databases only), `tar-file` (TAR archives), or `restic-repo` (Restic repository) |
 
 #### Directories
 | Variable | Default | Description |
@@ -69,9 +93,8 @@ Runs as a scheduled backup service via `supercronic`.
 | `DB_USER` | `bluespice` | Database user |
 | `DB_PASS` | – | Database password |
 | `DB_PREFIX` | – | Table prefix |
-| `FILE_BACKUP` | `true` | If `true`, backup all wiki files + databases. If `false`, backup only databases. Databases are always dumped to `/data/wiki/db-dumps/` |
-| `TAR_BACKUP` | – | If `true`, use TAR backup instead of Restic |
-| `BLUESPICE_BACKUP_RETENTION` | `5` | Retention time in days for TAR backups |
+| `FILE_BACKUP` | `true` | If `true`, backup all wiki files (plus databases). If `false`, backup only databases (no wiki files). Only relevant for `tar-file` and `restic-repo` backup types. |
+| `BLUESPICE_BACKUP_RETENTION` | `5` | Retention time in days for TAR backups (only for `BACKUP_TYPE=tar-file`) |
 | `WIKI_HOST` | – | Wiki hostname — used for TAR archive filenames |
 | `EDITION` | – | Set to `farm` to enable multi-instance farm backup |
 | `WIKI_FARM_USE_SHARED_DB` | – | *(Farm only)* Set if all farm instances share a single database |
