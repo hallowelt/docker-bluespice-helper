@@ -4,7 +4,7 @@ set -o nounset
 set -o pipefail
 
 export BLUESPICE_TAR_BACKUP_DIRECTORY=${BLUESPICE_TAR_BACKUP_DIRECTORY:-'/backup/tar-backup'}
-export BLUESPICE_DATABASE_BACKUP_DIRECTORY=${BLUESPICE_DATABASE_BACKUP_DIRECTORY:-'/data/wiki/db-dumps'}
+export BLUESPICE_DATABASE_DUMP_DIRECTORY=${BLUESPICE_DATABASE_DUMP_DIRECTORY:-'/data/wiki/db-dumps'}
 
 # Parse command line arguments
 RESTORE_MODE="full"
@@ -35,8 +35,8 @@ if tar -tzf "$BACKUP_FILE" | grep -q "\.tar\.gz" 2>/dev/null; then
 	HAS_FILES="yes"
 fi
 
-if [[ -f "${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${DB_NAME}.mainDB.sql" ]] || \
-   [[ -f "${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${DB_NAME}.sql" ]]; then
+if [[ -f "${BLUESPICE_DATABASE_DUMP_DIRECTORY}/${DB_NAME}.mainDB.sql" ]] || \
+   [[ -f "${BLUESPICE_DATABASE_DUMP_DIRECTORY}/${DB_NAME}.sql" ]]; then
 	HAS_DATABASES="yes"
 fi
 

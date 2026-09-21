@@ -1,5 +1,5 @@
 #!/bin/bash
-mkdir -p ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}
+mkdir -p ${BLUESPICE_DATABASE_DUMP_DIRECTORY}
 
 if [[ "${TAR_BACKUP}" == "true" ]]; then
 	mkdir -p ${BLUESPICE_TAR_BACKUP_DIRECTORY}

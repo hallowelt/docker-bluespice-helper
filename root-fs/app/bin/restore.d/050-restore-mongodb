@@ -6,7 +6,7 @@ Mongo_DB=collabpads
 echo "Restoring MongoDB Collabpads from backup"
 
 # Check if full collabpads dump exists
-if [[ -f "${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/collabpads_dump.gz" ]]; then
+if [[ -f "${BLUESPICE_DATABASE_DUMP_DIRECTORY}/collabpads_dump.gz" ]]; then
 	echo "Dropping existing collabpads database"
 	docker exec "${Mongo}" mongosh --eval "db.dropDatabase();" --db "${Mongo_DB}" 2>/dev/null || true
 	
@@ -14,9 +14,9 @@ if [[ -f "${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/collabpads_dump.gz" ]]; then
 	mongorestore \
 		--host="${Mongo}" \
 		--gzip \
-		--archive="${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/collabpads_dump.gz"
+		--archive="${BLUESPICE_DATABASE_DUMP_DIRECTORY}/collabpads_dump.gz"
 	
-elif [[ -f "${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/collabpads_EMPTY" ]]; then
+elif [[ -f "${BLUESPICE_DATABASE_DUMP_DIRECTORY}/collabpads_EMPTY" ]]; then
 	echo "Collabpads database was empty in backup - skipping restore"
 else
 	echo "WARNING: No collabpads backup found"
@@ -24,7 +24,7 @@ fi
 
 # Farm-specific session restore
 if [[ -n "${RESTORE_FARM_INSTANCE:-}" ]]; then
-	session_backup="${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/mongo-sessions/sessions_backup_${RESTORE_FARM_INSTANCE}.json"
+	session_backup="${BLUESPICE_DATABASE_DUMP_DIRECTORY}/mongo-sessions/sessions_backup_${RESTORE_FARM_INSTANCE}.json"
 	if [[ -f "$session_backup" ]]; then
 		echo "Restoring collabpads sessions for instance ${RESTORE_FARM_INSTANCE}"
 		docker exec -i "${Mongo}" mongoimport \
@@ -36,9 +36,9 @@ if [[ -n "${RESTORE_FARM_INSTANCE:-}" ]]; then
 	fi
 else
 	# Full restore - restore all farm instance sessions if they exist
-	if [[ -d "${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/mongo-sessions" ]]; then
+	if [[ -d "${BLUESPICE_DATABASE_DUMP_DIRECTORY}/mongo-sessions" ]]; then
 		echo "Restoring collabpads sessions for all farm instances"
-		for session_backup in "${BLUESPICE_DATABASE_BACKUP_DIRECTORY}"/mongo-sessions/sessions_backup_*.json; do
+		for session_backup in "${BLUESPICE_DATABASE_DUMP_DIRECTORY}"/mongo-sessions/sessions_backup_*.json; do
 			if [[ -f "$session_backup" ]]; then
 				echo "Restoring sessions from $(basename "$session_backup")"
 				docker exec -i "${Mongo}" mongoimport \
