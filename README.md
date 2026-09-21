@@ -58,7 +58,7 @@ The `BACKUP_TYPE` variable controls which backup method is used:
   - Stored in `/backup/tar-backup/`
   - Old backups retained based on `BLUESPICE_BACKUP_RETENTION`
 
-- **`restic-repo`** - Create Restic backups (deduplicating backup repository)
+- **`restic-repo`** - Create Restic backups (deduplicating backup repository)(experimental)
   - Respects `FILE_BACKUP` variable:
     - `true`: Backup all wiki files + database dumps
     - `false`: Backup only database dumps
@@ -101,7 +101,7 @@ The `BACKUP_TYPE` variable controls which backup method is used:
 
 ---
 
-## Restore
+## Restore (experimental)
 
 Restores backups created by the backup service. Use the `restore` wrapper command or manually set environment variables and call `restore-pipeline`.
 
