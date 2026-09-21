@@ -47,7 +47,7 @@ Runs as a scheduled backup service via `supercronic`.
 #### Scheduling
 | Variable | Default | Description |
 |---|---|---|
-| `BACKUP_TIME` | `0 2 * * *` | Cron expression for the backup schedule. Falls back to default if the value is not a valid cron string. |
+| `BLUESPICE_BACKUP_TIME` | `0 2 * * *` | Cron expression for the backup schedule. Falls back to default if the value is not a valid cron string. |
 
 #### Directories
 | Variable | Default | Description |
