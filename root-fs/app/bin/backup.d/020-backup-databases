@@ -50,7 +50,7 @@ if [ ${EDITION} == "farm" ]; then
             SFI_DB_PREFIX=$(echo "$line" | jq -r '.sfi_db_prefix')
 	    SFI_CREATE_LIST=$(mariadb_table_list ${SFI_DB_PREFIX})
 	    SFI_DATA_LIST=$(mariadb_table_data_list ${SFI_DB_PREFIX})
-            mariadb_dump ${SFI_DB} ${SFI_CRATE_LIST} --no-data  > ${BLUESPICE_DATABASE_DUMP_DIRECTORY}/${SFI_PATH}.sql
+            mariadb_dump ${SFI_DB} ${SFI_CREATE_LIST} --no-data  > ${BLUESPICE_DATABASE_DUMP_DIRECTORY}/${SFI_PATH}.sql
             mariadb_dump ${SFI_DB} ${SFI_DATA_LIST} --no-create-info >> ${BLUESPICE_DATABASE_DUMP_DIRECTORY}/${SFI_PATH}.sql
 
             done < <(jq -c '.[]' ${BLUESPICE_DATABASE_DUMP_DIRECTORY}/instances.json)
@@ -68,7 +68,7 @@ if [ ${EDITION} == "farm" ]; then
             SFI_DB=$(echo "$instance" | jq -r '.sfi_database')
 	    SFI_CREATE_LIST=$(mariadb_table_list ${SFI_DB})
 	    SFI_DATA_LIST=$(mariadb_table_data_list ${SFI_DB})
-            mariadb_dump ${SFI_DB} ${SFI_CRATE_LIST} --no-data > ${BLUESPICE_DATABASE_DUMP_DIRECTORY}/${SFI_PATH}.sql
+            mariadb_dump ${SFI_DB} ${SFI_CREATE_LIST} --no-data > ${BLUESPICE_DATABASE_DUMP_DIRECTORY}/${SFI_PATH}.sql
             mariadb_dump ${SFI_DB} ${SFI_DATA_LIST} --no-create-info >> ${BLUESPICE_DATABASE_DUMP_DIRECTORY}/${SFI_PATH}.sql
 
          done
