@@ -1,12 +1,14 @@
-ARG BASE_IMAGE=alpine:3
-FROM $BASE_IMAGE
+FROM alpine:3
 ENV PATH="/app/bin:${PATH}"
 RUN apk add bash \
-	mongodb-tools \
-	mysql-client \
 	docker-cli \
-	rsync \
+	mongodb-tools \
+	mariadb-client \
+	openssl \
 	restic \
+	rsync \
 	supercronic \
-	vim
+	vim \
+	jq 
 COPY ./root-fs/app /app
+WORKDIR /app
