@@ -12,7 +12,7 @@
 **/wiki/bluespice/farm-instances/*/images/cache
 **/wiki/bluespice/farm-instances/*/cache/*
 **/wiki/bluespice/farm-instances/*/rag/*
-**/wiki/bluespice/farm-instances/*/extensions/BlueSpiceFondation/data/*
+**/wiki/bluespice/farm-instances/*/extensions/BlueSpiceFoundation/data/*
 **/database
 **/database_collabpads
 **/search
