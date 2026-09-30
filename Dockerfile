@@ -9,6 +9,8 @@ RUN apk add bash \
 	rsync \
 	supercronic \
 	vim \
+	tini \
 	jq 
 COPY ./root-fs/app /app
 WORKDIR /app
+ENTRYPOINT ["/sbin/tini", "-s"]
