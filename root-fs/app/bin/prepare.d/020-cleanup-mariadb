@@ -1,12 +1,5 @@
-#!/bin/bash
 
-for f in /app/bin/prepare.d/*; do
-  if [ -f "$f" ]; then
-    echo ""
-    echo "🔧 Running $f"
-    $f $*
-  fi
-done
+#!/bin/bash
 
 if ls /data/database/logs/mariadb-bin.* 1>/dev/null 2>&1; then
   echo "Cleaning up MariaDB binlog files"
