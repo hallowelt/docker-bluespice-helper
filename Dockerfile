@@ -10,3 +10,6 @@ RUN apk add bash \
 	supercronic \
 	vim
 COPY ./root-fs/app /app
+
+# Build timestamp (UTC, YmdHis)
+RUN mkdir -p /image && date -u +%Y%m%d%H%M%S > /image/BUILDINFO
