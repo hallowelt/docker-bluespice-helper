@@ -10,3 +10,7 @@ RUN apk add bash \
 	supercronic \
 	vim
 COPY ./root-fs/app /app
+
+# Build info: value of build arg BUILDINFO, `-` if not set
+ARG BUILDINFO
+RUN mkdir -p /image && echo "${BUILDINFO:--}" > /image/BUILDINFO
