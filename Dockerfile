@@ -12,5 +12,10 @@ RUN apk add bash \
 	tini \
 	jq 
 COPY ./root-fs/app /app
+
+# Build info: value of build arg BUILDINFO, `-` if not set
+ARG BUILDINFO
+RUN mkdir -p /image && echo "${BUILDINFO:--}" > /image/BUILDINFO
+
 WORKDIR /app
 ENTRYPOINT ["/sbin/tini", "-s"]
