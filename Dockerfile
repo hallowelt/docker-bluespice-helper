@@ -12,5 +12,9 @@ RUN apk add bash \
 	tini \
 	jq 
 COPY ./root-fs/app /app
+
+# Build timestamp (UTC, YmdHis)
+RUN mkdir -p /image && date -u +%Y%m%d%H%M%S > /image/BUILDINFO
+
 WORKDIR /app
 ENTRYPOINT ["/sbin/tini", "-s"]
