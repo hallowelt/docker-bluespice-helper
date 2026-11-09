@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Create the RSA private key for signing JWTs (`mwstake/mediawiki-component-jwt`, e.g. Extension:WOPI).
+# The wiki container reads it from `WIKI_JWT_PRIVATE_KEY_FILE` (default `/data/bluespice/jwt_private.key`)
+if [ ! -f /data/wiki/bluespice/jwt_private.key ]; then
+  echo "#############################################"
+  echo "🔑 Creating JWT signing key"
+  mkdir -p /data/wiki/bluespice
+  openssl genrsa \
+    -out /data/wiki/bluespice/jwt_private.key 2048
+  # Only readable by the user of the wiki container
+  chown 1002:1002 /data/wiki/bluespice/jwt_private.key
+  chmod 600 /data/wiki/bluespice/jwt_private.key
+fi
