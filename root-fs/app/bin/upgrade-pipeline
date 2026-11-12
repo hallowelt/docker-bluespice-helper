@@ -1,42 +1,28 @@
 #!/bin/bash
-export LOGFILE=/data/wiki/bluespice/logs/backend_upgrade_5.log
-export VERSIONFILE=/data/wiki/bluespice/logs/BASEVERSION
-export Upgrade_Directory=/data/upgrade_backup
-delete_logs() {
-	cat ${LOGFILE} >> ${LOGFILE}.bak
-	rm -fr ${LOGFILE}
-	rm -fr ${VERSIONFILE}
-}
+# Upgrade of a BlueSpice 5.x installation to 6.x. Runs the scripts in /app/bin/upgrade6x once;
+# `-f` forces a rerun.
+export LOGFILE=/data/wiki/bluespice/logs/backend_upgrade_6.log
+
 while getopts ":f" option; do
-   case $option in
-      f) # rerun upgrade
-         delete_logs;;
-   esac
+	case $option in
+		f) # rerun upgrade
+			if [ -f ${LOGFILE} ]; then
+				cat ${LOGFILE} >> ${LOGFILE}.bak
+				rm -f ${LOGFILE}
+			fi
+			;;
+	esac
 done
 
-
-if [[ -f ${LOGFILE} ]] && [[ $(stat -c%s ${LOGFILE}) > 0 ]]; then
-    exit 0
-
-else
-    touch ${LOGFILE}
-    echo "move instances-Folders if needed"
-    /app/bin/upgrade5x/upgrade-filesystem
-    echo "running backend-upgrade"
-    echo "fix Databases"
-    /app/bin/upgrade5x/upgrade-databases
-    echo "Databases fixed"
-    echo "running further tasks" 
-    /app/bin/upgrade5x/upgrade-tasks
-    echo "Wait for Mongo"
-    echo "30"
-    sleep 10
-    echo "20"
-    sleep 10
-    echo "10"
-    echo "checking MongoDB"
-    /app/bin/upgrade5x/upgrade-mongo-db
-    echo "see DATADIR/wiki/bluespice/logs/backend_upgrade_5.log for more Information"
-    echo "restart container with -f Option to force rerun"
-
+if grep -qs "Upgrade to 6.x finished" ${LOGFILE}; then
+	echo "Upgrade already done, see ${LOGFILE}. Use the profile 'upgrade-force' to rerun it."
+	exit 0
 fi
+
+mkdir -p $(dirname ${LOGFILE})
+echo "$(date '+%Y-%m-%d %H:%M:%S') Upgrade to 6.x started" >> ${LOGFILE}
+for f in /app/bin/upgrade6x/*; do
+	echo "Running $f"
+	$f || { echo "$f failed" | tee -a ${LOGFILE}; exit 1; }
+done
+echo "$(date '+%Y-%m-%d %H:%M:%S') Upgrade to 6.x finished" | tee -a ${LOGFILE}
