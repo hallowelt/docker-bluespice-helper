@@ -32,8 +32,9 @@ directories=(
 
 if [[ "${EDITION}" == "farm" || "${EDITION}" == "galaxy" ]]; then
   directories+=(
-    /data/wiki/bluespice/farm-archives
     /data/wiki/bluespice/farm-instances
+    /data/wiki/bluespice/farm-archives
+    /data/wiki/bluespice/farm-export-import
   )
 fi
 
