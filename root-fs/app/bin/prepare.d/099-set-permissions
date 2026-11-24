@@ -6,7 +6,9 @@ set -o pipefail
 echo "#############################################"
 echo "Changing user permission on persistent data directories"
 
-find /data/database ! -user 911 -exec chown 911:911 {} +
+# MariaDB (`DB_TYPE=mysql`) runs as 911. `/data/database/postgres` is excluded: the PostgreSQL
+# image (`DB_TYPE=postgres`) starts as root and sets the owner of its data directory itself
+find /data/database -path /data/database/postgres -prune -o ! -user 911 -exec chown 911:911 {} +
 find /data/search ! -user 1000 -exec chown 1000:1000 {} +
 find /data/wiki ! -user 1002 -exec chown 1002:1002 {} +
 

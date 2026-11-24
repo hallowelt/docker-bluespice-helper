@@ -14,8 +14,24 @@ function mysql_dump() {
 		$*
 }
 
+# PostgreSQL (`DB_TYPE=postgres`): `pg_dump` is consistent by default. The structure of
+# `objectcache` is kept, as it is a core table, but not its data
+function pgsql_list_databases() {
+    PGPASSWORD=${MYSQL_PASS} psql -h ${MYSQL_SERVER} -U ${MYSQL_USER} -d ${DB_NAME:-bluespice} -At \
+        -c "SELECT datname FROM pg_database WHERE NOT datistemplate AND datname <> 'postgres' AND has_database_privilege(datname, 'CONNECT')"
+}
+function pgsql_dump() {
+    PGPASSWORD=${MYSQL_PASS} pg_dump -h ${MYSQL_SERVER} -U ${MYSQL_USER} \
+        --exclude-table-data='*.objectcache' \
+        $*
+}
+
 #LIST DATABASES
+if [[ "${DB_TYPE:-mysql}" == "postgres" ]]; then
+    DATABASES=$(pgsql_list_databases)
+else
 DATABASES=$(mysql_connect <<< "SHOW DATABASES;" | awk -F " " '{if (NR!=1) print $1}' | grep -v information_schema | grep -v mysql | grep -v sys | grep -v test | grep -v performance_schema)
+fi
 
 # Create an array with the database names
 readarray -t aDB <<< "$DATABASES"
@@ -25,5 +41,9 @@ for sDB in "${aDB[@]}"; do
     if [[ -f ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${sDB}.sql ]]; then
     	rm -fr ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${sDB}.sql 
     fi
-    mysql_dump ${sDB} > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${sDB}.sql 
+    if [[ "${DB_TYPE:-mysql}" == "postgres" ]]; then
+        pgsql_dump ${sDB} > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${sDB}.sql
+    else
+        mysql_dump ${sDB} > ${BLUESPICE_DATABASE_BACKUP_DIRECTORY}/${sDB}.sql
+    fi
 done
