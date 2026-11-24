@@ -4,6 +4,7 @@ RUN apk add bash \
 	docker-cli \
 	mongodb-tools \
 	mysql-client \
+	postgresql18-client \
 	openssl \
 	restic \
 	rsync \

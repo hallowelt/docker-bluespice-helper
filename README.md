@@ -6,6 +6,14 @@
 runs as prepare service to create Directory-Tree and set Correct permissions
 ` command : prepare bluespice `
 
+### Database type
+
+`DB_TYPE` selects the database: `mysql` (default) or `postgres`. It is used by the backup
+(`backup.d/020-backup-databases`: `mysqldump` or `pg_dump`) and by `restore.d/simple-restore`.
+For `postgres`, the restore drops and re-creates the schema `DB_SCHEMA` (default `mediawiki`)
+instead of the database. `prepare` does not change the owner of `/data/database/postgres`, as
+the PostgreSQL image manages its data directory itself.
+
 ## Runs as upgrade-helper
 Upgrades a BlueSpice 5.x installation to 6.x. Upgrades from older versions are not supported.
 
